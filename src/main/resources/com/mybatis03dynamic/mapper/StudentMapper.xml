@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mybatis03dynamic.mapper.StudentMapper">
+    <sql id="selectAll">
+        select id, name, sex from student
+    </sql>
+
+    <select id="findAll" resultType="com.mybatis03dynamic.entities.Student">
+        <include refid="selectAll"></include>
+    </select>
+
+    <select id="selectStudentById" parameterType="int" resultType="com.mybatis03dynamic.entities.Student">
+        <include refid="selectAll"></include> where id = #{id};
+    </select>
+
+    <select id="selectStudentsByName" parameterType="String" resultType="com.mybatis03dynamic.entities.Student">
+        <include refid="selectAll"></include> where name like '%${value}%';
+    </select>
+
+    <select id="selectStudentsByVo" parameterType="com.mybatis03dynamic.entities.QueryVo" resultType="com.mybatis03dynamic.entities.Student">
+        <include refid="selectAll"></include> where name like #{student.name};
+    </select>
+
+    <select id="selectStudentsByCondition" parameterType="com.mybatis03dynamic.entities.Student" resultType="com.mybatis03dynamic.entities.Student">
+        <include refid="selectAll"></include>
+        <where>
+            <if test="name!=null">
+                and name = #{name}
+            </if>
+            <if test="sex=='girl' or sex=='boy' or sex=='secret'">
+                and sex = #{sex}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectStudentsByList" parameterType="com.mybatis03dynamic.entities.QueryVo" resultType="com.mybatis03dynamic.entities.Student">
+        <include refid="selectAll"></include>
+        <where>
+            <if test="ids!=null and ids.size()>0">
+                <foreach collection="ids" open="and id in(" close=")" item="id" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+    </select>
+</mapper>
